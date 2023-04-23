@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+
+<html><head>
+    <title>My Maps</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+	<link rel="stylesheet" type="text/css" href="leaflet.css">
+    <script type="text/javascript" src='leaflet.js'></script>
+	<style> #map { height: 800px; }	</style>
+</head><body>
+<div id='map'></div>
+<script type="text/javascript">
+
+    // Setting all the icons variables, probably a very inefficient approach. Dynamic loading sounds better.
+
+    var greenSmallTH = L.icon({
+    iconUrl: 'http://localhost:5000/icons/',
+    iconSize:     [38, 95], // size of the icon
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    })
+
+
+
+	var satellite_map = L.tileLayer('http://localhost:5000/test/{z}/{y}/{x}', {
+        maxZoom: 8,
+        continuousWorld: true,
+        noWrap: true,
+        attribution: 'Astrosias'
+    });
+	var naked_map = L.tileLayer('http://localhost:5000/test/{z}/{y}/{x}', {
+        maxZoom: 8,
+        continuousWorld: true,
+        noWrap: true,
+        attribution: 'Astrosias'
+    });
+	
+	var baseMaps = {
+    "Base Map": naked_map,
+    "Satellite Map": satellite_map
+	};
+
+    var mymap = L.map('map', {
+        center: [0, 0], // change to center at the region you generated the tiles for
+        zoom: 0,
+        subdomains: [],
+		layers: [satellite_map, naked_map]
+    });
+
+	var layerControl = L.control.layers(baseMaps).addTo(mymap);
+
+</script>
+</body></html>

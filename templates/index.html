@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+
+<html><head>
+    <title>My Maps</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+	<link rel="stylesheet" type="text/css" href="leaflet.css">
+	<link rel="stylesheet" type="text/css" href="leaflet-geoman.css">
+<!--	<link rel="stylesheet" type="text/css" href="leaflet.draw.css">-->
+<!--	<link rel="stylesheet" type="text/css" href="leaflet.draw-src.css">-->
+    <script type="text/javascript" src='leaflet.js'></script>
+    <script type="text/javascript" src="rastercoord.js"></script>
+    <script type="text/javascript" src="ajax.js"></script>
+    <script type="text/javascript" src="icons.js"></script>
+<!--    <script type="text/javascript" src="recon_icons.js"></script>-->
+    <script type="text/javascript" src="leaflet-geoman.min.js"></script>
+<!--    <script type="text/javascript" src="leaflet.draw.js"></script>-->
+	<style> #map { height: 800px; }	</style>
+</head><body>
+<div id='map'></div>
+<input class="favorite styled"
+       type="button"
+       value="Add to favorites"
+           id='saveButton'>
+
+<script type="text/javascript">
+function getMethods(obj)
+{
+    var res = [];
+    for(var m in obj) {
+        if(typeof obj[m] == "function") {
+            res.push(m)
+        }
+    }
+    return res;
+}
+
+var template = '<form id="popup-form">\
+  <label for="input-speed">Additional info:</label>\
+  <input id="input-speed" class="popup-input" type="str" />\
+  <button id="button-submit" type="button">Save Changes</button>\
+</form>';
+
+
+var map = L.map('map', {
+    center: [0, 0],
+    zoom: 1,
+    crs: L.CRS.Simple
+    });
+
+var collection = {
+    "type": "FeatureCollection",
+    "features": []
+};
+
+<!--var geojsonLayerWarapi = new L.GeoJSON.AJAX("warapi.geojson");-->
+<!--geojsonLayerWarapi.addTo(map);-->
+
+	var tif_map = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
+	    maxZoom: 7,
+        attribution: 'Astrosias',
+        drawControl: true
+	}).addTo(map);
+
+map.setView( [-1000, 1000], 1);
+
+geojsonLayerWarapi.addTo(map);
+
+<!--map.on('zoomend', function() {-->
+<!--    if (map.getZoom() <2){-->
+<!--            map.removeLayer(geojsonLayerWarapi);-->
+<!--    }-->
+<!--    else {-->
+<!--            map.addLayer(geojsonLayerWarapi);-->
+<!--        }-->
+<!--});-->
+
+
+map.pm.addControls({
+  position: 'topleft',
+});
+
+map.pm.Toolbar.copyDrawControl('Marker', {
+  name: 'obsBunkerT3',
+  block: 'custom',
+  title: 'Display text on hover button',
+});
+map.pm.Draw.obsBunkerT3.setPathOptions({ icon: forgeIcon('StormCannon', 'WARDENS') });
+
+map.on('pm:create', (e)=>{
+    console.log(e);
+    if(e.shape === 'obsBunkerT3'){
+    console.log(getMethods(e));
+     e.layer.bindPopup(template).openPopup();
+     var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:75});
+     circle_tmp.addTo(map);
+  }
+});
+
+function saveDrawing(){
+console.log("Saving drawings");
+var layers = L.PM.Utils.findLayers(map);
+var group = L.featureGroup();
+layers.forEach((layer)=>{
+    group.addLayer(layer);
+});
+shapes = group.toGeoJSON();
+}
+
+document.getElementById("saveButton").onclick = saveDrawing;
+
+
+</script>
+</body></html>

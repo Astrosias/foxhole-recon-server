@@ -1,0 +1,2 @@
+var iconsFolder = "images/recon/";
+
