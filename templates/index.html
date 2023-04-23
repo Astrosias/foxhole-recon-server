@@ -5,6 +5,7 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
 	<link rel="stylesheet" type="text/css" href="leaflet.css">
 	<link rel="stylesheet" type="text/css" href="leaflet-geoman.css">
+	<script type="text/javascript" src="custom_styles.js"></script>
 <!--	<link rel="stylesheet" type="text/css" href="leaflet.draw.css">-->
 <!--	<link rel="stylesheet" type="text/css" href="leaflet.draw-src.css">-->
     <script type="text/javascript" src='leaflet.js'></script>
@@ -13,14 +14,14 @@
     <script type="text/javascript" src="icons.js"></script>
 <!--    <script type="text/javascript" src="recon_icons.js"></script>-->
     <script type="text/javascript" src="leaflet-geoman.min.js"></script>
-    <script type="text/javascript" src="map.js"></script>
+<!--    <script type="text/javascript" src="map.js"></script>-->
 <!--    <script type="text/javascript" src="leaflet.draw.js"></script>-->
 	<style> #map { height: 800px; }	</style>
 </head><body>
 <div id='map'></div>
 <input class="favorite styled"
        type="button"
-       value="Add to favorites"
+       value="Save drawings"
            id='saveButton'>
 
 <script type="text/javascript">
@@ -34,7 +35,7 @@ function getMethods(obj)
     }
     return res;
 }
-var ratio = 0.5;
+var ratio = 0.25;
 var getName = function(layer) {
         var name = prompt('Enter additional intel', '');
         return name;
@@ -80,6 +81,36 @@ map.pm.Toolbar.copyDrawControl('Marker', {
   block: 'custom',
   title: 'Watchtower',
 });
+map.pm.Toolbar.copyDrawControl('Polygon', {
+  name: 'facility',
+  block: 'custom',
+  title: 'Facility Complex',
+});
+map.pm.Toolbar.copyDrawControl('Polyline', {
+  name: 'defense1',
+  block: 'custom',
+  title: 'Defenses: Pillboxes or very bad bunker',
+});
+map.pm.Toolbar.copyDrawControl('Polyline', {
+  name: 'defense2',
+  block: 'custom',
+  title: 'Defenses: Hard to pass',
+});
+map.pm.Toolbar.copyDrawControl('Polyline', {
+  name: 'defense3',
+  block: 'custom',
+  title: 'Defenses: Concrete, impossible to cross',
+});
+map.pm.Toolbar.copyDrawControl('Polyline', {
+  name: 'rails',
+  block: 'custom',
+  title: 'Railroad',
+});
+map.pm.Toolbar.copyDrawControl('Polyline', {
+  name: 'partisanRoad',
+  block: 'custom',
+  title: 'Partisan path',
+});
 map.pm.addControls({
 drawControls: false
 });
@@ -102,6 +133,9 @@ map.on('pm:create', (e)=>{
      e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
      var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*80});
      circle_tmp.addTo(map);
+  }
+  else if(styledNames.includes(e.shape)){
+     e.layer.setStyle(getStyle(e.shape));
   }
 });
 
