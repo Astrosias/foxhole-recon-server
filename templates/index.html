@@ -34,11 +34,10 @@ function getMethods(obj)
     return res;
 }
 
-var template = '<form id="popup-form">\
-  <label for="input-speed">Additional info:</label>\
-  <input id="input-speed" class="popup-input" type="str" />\
-  <button id="button-submit" type="button">Save Changes</button>\
-</form>';
+var getName = function(layer) {
+        var name = prompt('Enter additional intel', '');
+        return name;
+    };
 
 
 var map = L.map('map', {
@@ -88,9 +87,11 @@ map.pm.Draw.obsBunkerT3.setPathOptions({ icon: forgeIcon('StormCannon', 'WARDENS
 
 map.on('pm:create', (e)=>{
     console.log(e);
+    var name = getName(e.layer);
     if(e.shape === 'obsBunkerT3'){
     console.log(getMethods(e));
-     e.layer.bindPopup(template).openPopup();
+        e.layer.bindPopup(name);
+     e.layer.setIcon(forgeIcon('StormCannon', 'WARDENS'));
      var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:75});
      circle_tmp.addTo(map);
   }
