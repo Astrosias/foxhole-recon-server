@@ -13,6 +13,7 @@
     <script type="text/javascript" src="icons.js"></script>
 <!--    <script type="text/javascript" src="recon_icons.js"></script>-->
     <script type="text/javascript" src="leaflet-geoman.min.js"></script>
+    <script type="text/javascript" src="map.js"></script>
 <!--    <script type="text/javascript" src="leaflet.draw.js"></script>-->
 	<style> #map { height: 800px; }	</style>
 </head><body>
@@ -33,12 +34,16 @@ function getMethods(obj)
     }
     return res;
 }
-
+var ratio = 0.5;
 var getName = function(layer) {
         var name = prompt('Enter additional intel', '');
         return name;
     };
 
+var collection = {
+    "type": "FeatureCollection",
+    "features": []
+};
 
 var map = L.map('map', {
     center: [0, 0],
@@ -46,15 +51,7 @@ var map = L.map('map', {
     crs: L.CRS.Simple
     });
 
-var collection = {
-    "type": "FeatureCollection",
-    "features": []
-};
-
-<!--var geojsonLayerWarapi = new L.GeoJSON.AJAX("warapi.geojson");-->
-<!--geojsonLayerWarapi.addTo(map);-->
-
-	var tif_map = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
+var tif_map = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
 	    maxZoom: 7,
         attribution: 'Astrosias',
         drawControl: true
@@ -64,16 +61,6 @@ map.setView( [-1000, 1000], 1);
 
 geojsonLayerWarapi.addTo(map);
 
-<!--map.on('zoomend', function() {-->
-<!--    if (map.getZoom() <2){-->
-<!--            map.removeLayer(geojsonLayerWarapi);-->
-<!--    }-->
-<!--    else {-->
-<!--            map.addLayer(geojsonLayerWarapi);-->
-<!--        }-->
-<!--});-->
-
-
 map.pm.addControls({
   position: 'topleft',
 });
@@ -81,21 +68,43 @@ map.pm.addControls({
 map.pm.Toolbar.copyDrawControl('Marker', {
   name: 'obsBunkerT3',
   block: 'custom',
-  title: 'Display text on hover button',
+  title: 'Concrete observation bunker',
 });
-map.pm.Draw.obsBunkerT3.setPathOptions({ icon: forgeIcon('StormCannon', 'WARDENS') });
+map.pm.Toolbar.copyDrawControl('Marker', {
+  name: 'obsBunkerT2',
+  block: 'custom',
+  title: 'T2 observation bunker',
+});
+map.pm.Toolbar.copyDrawControl('Marker', {
+  name: 'obsBunkerT1',
+  block: 'custom',
+  title: 'Watchtower',
+});
+map.pm.addControls({
+drawControls: false
+});
 
 map.on('pm:create', (e)=>{
     console.log(e);
     var name = getName(e.layer);
+    e.layer.bindPopup(name);
     if(e.shape === 'obsBunkerT3'){
-    console.log(getMethods(e));
-        e.layer.bindPopup(name);
-     e.layer.setIcon(forgeIcon('StormCannon', 'WARDENS'));
-     var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:75});
+     e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
+     var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*180});
+     circle_tmp.addTo(map);
+  }
+  else if(e.shape === 'obsBunkerT2'){
+     e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
+     var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*120});
+     circle_tmp.addTo(map);
+  }
+  else if(e.shape === 'obsBunkerT1'){
+     e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
+     var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*80});
      circle_tmp.addTo(map);
   }
 });
+
 
 function saveDrawing(){
 console.log("Saving drawings");
