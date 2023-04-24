@@ -1,4 +1,4 @@
-const styledNames = ["facility", "defense1", "defense2", "defense3", "rails", "partisanRoad"]
+const styledNames = ["facility", "defense1", "defense2", "defense3", "rails", "partisanRoad"];
 
 const styleFacility = {fillColor:'PaleGreen',color: 'green',weight:0,fillOpacity:0.3, dashArray: '3'};
 const styleDefenseLight = {color: 'green',weight:1, dashArray: '5'};
@@ -27,3 +27,26 @@ function getStyle(name){
         return stylePartisanRoad
    }
 };
+
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+function export2txt(originalData) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(originalData, getCircularReplacer())], {
+    type: "text/plain"
+  }));
+  a.setAttribute("download", "data.json");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}

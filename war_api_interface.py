@@ -69,7 +69,7 @@ def retrieve_api_json():
 				region = region.replace("Hex", "")
 				coords = [item['x'] * coefx + region_to_offsets[region][0] * coefCol, item['y'] * coefy + region_to_offsets[region][1] * coefLine]
 				gj_item = {"type": "Feature",
-						   "properties": {"name": icon_dictionnary[str(item["iconType"])], "popupContent": "Test", "teamId": item["teamId"]},
+						   "properties": {"name": icon_dictionnary[str(item["iconType"])], "popupContent": "warapi", "teamId": item["teamId"]},
 						   "geometry": {"type": "Point", "coordinates": [coords[0], coords[1]]}}
 				geojon["features"].append(gj_item)
 				# print(gj_item)

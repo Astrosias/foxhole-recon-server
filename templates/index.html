@@ -35,16 +35,11 @@ function getMethods(obj)
     }
     return res;
 }
-var ratio = 0.3599;
+var ratio = 0.155;
 var getName = function(layer) {
         var name = prompt('Enter additional intel', '');
         return name;
     };
-
-var collection = {
-    "type": "FeatureCollection",
-    "features": []
-};
 
 var map = L.map('map', {
     center: [0, 0],
@@ -143,11 +138,23 @@ map.on('pm:create', (e)=>{
 function saveDrawing(){
 console.log("Saving drawings");
 var layers = L.PM.Utils.findLayers(map);
-var group = L.featureGroup();
+var group = []
 layers.forEach((layer)=>{
-    group.addLayer(layer);
+    if (Object.hasOwn(layer, '_drawnByGeoman')){
+        layer.properties = {"shape": layer.pm._shape};
+        layer_ = layer.toGeoJSON();
+        console.log(layer_);
+        layer_.properties.shape = layer.pm._shape;
+        group.push(layer_);
+    }
 });
-shapes = group.toGeoJSON();
+var jsonObject = new Object();
+jsonObject.type = "FeatureCollection";
+jsonObject.features = group;
+console.log(jsonObject);
+<!--var stringJson = JSON.stringify(shapes);-->
+<!--console.log(stringJson);-->
+export2txt(jsonObject);
 }
 
 document.getElementById("saveButton").onclick = saveDrawing;
