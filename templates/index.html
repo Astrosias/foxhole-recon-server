@@ -56,45 +56,46 @@ var tif_map = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
 map.setView( [-1000, 1000], 1);
 
 geojsonLayerWarapi.addTo(map);
+geojsonLayerRecon.addTo(map);
 
 map.pm.addControls({
   position: 'topleft',
 });
 
 map.pm.Toolbar.copyDrawControl('Marker', {
-  name: 'obsBunkerT3',
+  name: 'obsBunkerT3Colonial',
   block: 'custom',
   title: 'Concrete observation bunker',
 });
 map.pm.Toolbar.copyDrawControl('Marker', {
-  name: 'obsBunkerT2',
+  name: 'obsBunkerT2Colonial',
   block: 'custom',
-  title: 'T2 observation bunker',
+  title: 'T2 Colonial observation bunker',
 });
 map.pm.Toolbar.copyDrawControl('Marker', {
-  name: 'obsBunkerT1',
+  name: 'obsBunkerT1Colonial',
   block: 'custom',
-  title: 'Watchtower',
+  title: 'Colonial Watchtower',
 });
 map.pm.Toolbar.copyDrawControl('Polygon', {
-  name: 'facility',
+  name: 'facilityColonial',
   block: 'custom',
-  title: 'Facility Complex',
+  title: 'Colonial Facility Complex',
 });
 map.pm.Toolbar.copyDrawControl('Polyline', {
-  name: 'defense1',
+  name: 'defense1Colonial',
   block: 'custom',
-  title: 'Defenses: Pillboxes or very bad bunker',
+  title: 'Colonial Defenses: Pillboxes or very bad bunker',
 });
 map.pm.Toolbar.copyDrawControl('Polyline', {
-  name: 'defense2',
+  name: 'defense2Colonial',
   block: 'custom',
-  title: 'Defenses: Hard to pass',
+  title: 'Colonial Defenses: Hard to pass',
 });
 map.pm.Toolbar.copyDrawControl('Polyline', {
-  name: 'defense3',
+  name: 'defense3Colonial',
   block: 'custom',
-  title: 'Defenses: Concrete, impossible to cross',
+  title: 'Colonial Defenses: Concrete, impossible to cross',
 });
 map.pm.Toolbar.copyDrawControl('Polyline', {
   name: 'rails',
@@ -114,17 +115,17 @@ map.on('pm:create', (e)=>{
     console.log(e);
     var name = getName(e.layer);
     e.layer.bindPopup(name);
-    if(e.shape === 'obsBunkerT3'){
+    if(e.shape === 'obsBunkerT3Colonial'){
      e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
      var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*180});
      circle_tmp.addTo(map);
   }
-  else if(e.shape === 'obsBunkerT2'){
+  else if(e.shape === 'obsBunkerT2Colonial'){
      e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
      var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*120});
      circle_tmp.addTo(map);
   }
-  else if(e.shape === 'obsBunkerT1'){
+  else if(e.shape === 'obsBunkerT1Colonial'){
      e.layer.setIcon(forgeIcon('Watchtower', 'COLONIALS'));
      var circle_tmp = L.circle(e.layer.getLatLng(), {weight:0, radius:ratio*80});
      circle_tmp.addTo(map);
@@ -141,10 +142,10 @@ var layers = L.PM.Utils.findLayers(map);
 var group = []
 layers.forEach((layer)=>{
     if (Object.hasOwn(layer, '_drawnByGeoman')){
-        layer.properties = {"shape": layer.pm._shape};
         layer_ = layer.toGeoJSON();
-        console.log(layer_);
+        console.log(layer._popup._content);
         layer_.properties.shape = layer.pm._shape;
+        layer_.properties.popup =  layer._popup._content;
         group.push(layer_);
     }
 });
@@ -152,8 +153,6 @@ var jsonObject = new Object();
 jsonObject.type = "FeatureCollection";
 jsonObject.features = group;
 console.log(jsonObject);
-<!--var stringJson = JSON.stringify(shapes);-->
-<!--console.log(stringJson);-->
 export2txt(jsonObject);
 }
 
