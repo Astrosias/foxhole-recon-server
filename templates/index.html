@@ -25,6 +25,9 @@
            id='saveButton'>
 
 <script type="text/javascript">
+
+var removed_features = [];
+
 function getMethods(obj)
 {
     var res = [];
@@ -135,11 +138,19 @@ map.on('pm:create', (e)=>{
   }
 });
 
+map.on('pm:remove', e => {
+    // do stuff regarding the removed feature
+    if (!(Object.hasOwn(e.layer, '_drawnByGeoman'))){
+        console.log(e.layer.feature);
+        removed_features.push(e.layer.feature);
+        console.log(removed_features[0]);
+    }
+});
 
 function saveDrawing(){
 console.log("Saving drawings");
 var layers = L.PM.Utils.findLayers(map);
-var group = []
+var group = [];
 layers.forEach((layer)=>{
     if (Object.hasOwn(layer, '_drawnByGeoman')){
         layer_ = layer.toGeoJSON();
@@ -149,11 +160,26 @@ layers.forEach((layer)=>{
         group.push(layer_);
     }
 });
+
 var jsonObject = new Object();
 jsonObject.type = "FeatureCollection";
 jsonObject.features = group;
 console.log(jsonObject);
-export2txt(jsonObject);
+export2txt(jsonObject, "recon.geojson");
+
+var group = [];
+console.log(removed_features);
+    for (i in removed_features){
+        feature = removed_features[i];
+        console.log(feature);
+        group.push(feature);
+    };
+
+var jsonObject = new Object();
+jsonObject.type = "FeatureCollection";
+jsonObject.features = group;
+console.log(jsonObject);
+export2txt(jsonObject, "removed.geojson");
 }
 
 document.getElementById("saveButton").onclick = saveDrawing;

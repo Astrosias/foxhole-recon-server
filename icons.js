@@ -114,12 +114,12 @@ const getCircularReplacer = () => {
     return value;
   };
 };
-function export2txt(originalData) {
+function export2txt(originalData, name) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([JSON.stringify(originalData, getCircularReplacer())], {
     type: "text/plain"
   }));
-  a.setAttribute("download", "data.json");
+  a.setAttribute("download", name);
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

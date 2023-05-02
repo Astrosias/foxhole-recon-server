@@ -25,26 +25,26 @@ icon_dictionnary = {"8": "ForwardBase", "11": "Medical", "12": "Vehicle", "17": 
 					"59": "StormCannon", "60": "IntelCenter", "61": "Coal", "62": "Fuel", "19": "TechCenter", "45": "RelicBase"}
 
 
-class JsonMaker:
-
-	def __int__(self):
-		self.all_war_json = []
-		self.war_url = "https://war-service-live.foxholeservices.com/api/worldconquest/maps"
-		req = requests.get(self.war_url)
-		self.regions = req.json()
-		pass
-
-	def retrieve_all_json(self):
-		for region in self.regions:
-			# print(region)
-			url_tmp = "{}}/{}/dynamic/public".format(self.war_url, region)
-			req = requests.get(url=url_tmp)
-			self.all_war_json.append(req.json())
-			with open("json_data/{}.json".format(region), 'w') as file:
-				json.dump(req.json(), file)
-
-	def create_geojson(self):
-		pass
+# class JsonMaker:
+#
+# 	def __int__(self):
+# 		self.all_war_json = []
+# 		self.war_url = "https://war-service-live.foxholeservices.com/api/worldconquest/maps"
+# 		req = requests.get(self.war_url)
+# 		self.regions = req.json()
+# 		pass
+#
+# 	def retrieve_all_json(self):
+# 		for region in self.regions:
+# 			# print(region)
+# 			url_tmp = "{}}/{}/dynamic/public".format(self.war_url, region)
+# 			req = requests.get(url=url_tmp)
+# 			self.all_war_json.append(req.json())
+# 			with open("json_data/{}.json".format(region), 'w') as file:
+# 				json.dump(req.json(), file)
+#
+# 	def create_geojson(self):
+# 		pass
 
 
 def retrieve_api_json():
