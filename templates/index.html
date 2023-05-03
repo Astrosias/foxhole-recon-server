@@ -154,9 +154,11 @@ var group = [];
 layers.forEach((layer)=>{
     if (Object.hasOwn(layer, '_drawnByGeoman')){
         layer_ = layer.toGeoJSON();
-        console.log(layer._popup._content);
+        if (layer._popup !== null){
+                console.log(layer._popup._content);
+                layer_.properties.popup =  layer._popup._content;
+        }
         layer_.properties.shape = layer.pm._shape;
-        layer_.properties.popup =  layer._popup._content;
         group.push(layer_);
     }
 });

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, send_file
 import os
+import sys
 
 app = Flask(__name__)
 
@@ -36,4 +37,4 @@ def load_image(filename):
 
 
 if __name__ == '__main__':
-	app.run(debug=False, host='0.0.0.0', port=5000)
+	app.run(debug=False, host='0.0.0.0', port=int(sys.argv[1]))

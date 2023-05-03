@@ -1,55 +1,70 @@
 import os
 import json
 
-abspath = os.path.abspath(".")
-
-original_geojson_path = ""
-new_geojsons_path = ""
+# abspath = os.path.abspath(".")
+abspath = r"C:\Users\alexa\Desktop"
+original_geojson_path = r"C:\Users\alexa\Desktop\recon.geojson"
+new_geojsons_path = r"C:\Users\alexa\Desktop\recon"
+removed_geojsons_path = r"C:\Users\alexa\Desktop\removed"
 
 all_new_files = os.listdir(new_geojsons_path)
 all_new_geojson = []
 
 for path_ in all_new_files:
 	if path_.endswith(".geojson"):
-		all_new_geojson.append(os.path.join(abspath, path_))
+		print(path_)
+		all_new_geojson.append(os.path.join(new_geojsons_path, path_))
+		
+all_removed_files = os.listdir(removed_geojsons_path)
+all_removed_geojson = []
 
-original_geojson = json.loads(original_geojson_path)
+for path_ in all_removed_files:
+	if path_.endswith(".geojson"):
+		print(path_)
+		all_removed_geojson.append(os.path.join(removed_geojsons_path, path_))
 
+with open(original_geojson_path, 'r') as j:
+	original_geojson = json.loads(j.read())
+
+for feature in original_geojson["features"]:
+	if feature["type"] == "FeatureCollection":
+		# print(feature)
+		for feature_ in feature["features"]:
+			original_geojson["features"].append(feature_)
+		original_geojson["features"].remove(feature)
 
 for path_ in all_new_geojson:
-	geojson_tmp = json.loads(path_)
+	with open(path_, 'r') as j:
+		geojson_tmp = json.loads(j.read())
 	for feature in geojson_tmp["features"]:
+		# print(feature)
 		original_geojson["features"].append(feature)
 
+# for feature in original_geojson["features"]:
+# 	print(feature)
+
+for path_ in all_removed_geojson:
+	with open(path_, 'r') as j:
+		geojson_tmp = json.loads(j.read())
+	for feature in geojson_tmp["features"]:
+		print(feature)
+		if feature is None:
+			continue
+		for feature_ in original_geojson["features"]:
+			if "coordinates" in feature.keys() and "coordinates" in feature_.keys():
+				if feature["coordinates"] == feature_["coordinates"] and feature['type'] == feature_["type"]:
+					print("removing ", feature)
+					original_geojson["features"].remove(feature)
+					continue
+			elif "geometry" in feature.keys() and "geometry" in feature_.keys():
+				if feature["geometry"]["coordinates"] == feature_["geometry"]["coordinates"] and feature['type'] == feature_["type"]:
+					print("removing ", feature)
+					original_geojson["features"].remove(feature)
+					continue
+		print(feature, " not removed")
 
 
+with open(original_geojson_path + "save", 'w') as file:
+	json.dump(original_geojson, file)
 
 
-def retrieve_api_json():
-	"""
-	Get all the map data from the WAR API, and stores them in separate jsons for each region.
-	:return:
-	"""
-	url = "https://war-service-live.foxholeservices.com/api/worldconquest/maps"
-	req = requests.get(url)
-	regions = req.json()
-
-	geojon = {"type": "FeatureCollection", "features": []}
-
-	for region in regions:
-		# print(region)
-		url_tmp = "https://war-service-live.foxholeservices.com/api/worldconquest/maps/{}/dynamic/public".format(region)
-		req = requests.get(url=url_tmp)
-		with open("json_data/{}.json".format(region), 'w') as file:
-			json_tmp = req.json()
-			json.dump(req.json(), file)
-			for item in json_tmp['mapItems']:
-				region = region.replace("Hex", "")
-				coords = [item['x'] * coefx + region_to_offsets[region][0] * coefCol, item['y'] * coefy + region_to_offsets[region][1] * coefLine]
-				gj_item = {"type": "Feature",
-						   "properties": {"name": icon_dictionnary[str(item["iconType"])], "popupContent": "warapi", "teamId": item["teamId"]},
-						   "geometry": {"type": "Point", "coordinates": [coords[0], coords[1]]}}
-				geojon["features"].append(gj_item)
-				# print(gj_item)
-		with open(geojson_path, 'w') as file:
-			json.dump(geojon, file)
