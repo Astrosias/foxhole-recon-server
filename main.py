@@ -3,12 +3,14 @@ import os
 import sys
 import json
 import merge_geojson
+import war_api_interface
 import requests
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
+	war_api_interface.retrieve_api_json()
 	return render_template('index.html')
 
 

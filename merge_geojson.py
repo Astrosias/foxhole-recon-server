@@ -1,6 +1,7 @@
 import os
 import json
 
+
 def run():
 	abspath = os.path.abspath(".")
 	# abspath = r"."
@@ -38,13 +39,12 @@ def run():
 			original_geojson["features"].remove(feature)
 
 	for path_ in all_new_geojson:
-		print(path_)
 		with open(path_, 'r') as j:
 			geojson_tmp = json.loads(j.read())
-		print(geojson_tmp)
 		for feature in geojson_tmp["value"]["features"]:
 			# print(feature)
 			original_geojson["features"].append(feature)
+		os.remove(path_)
 
 	# for feature in original_geojson["features"]:
 	# 	print(feature)
@@ -69,6 +69,7 @@ def run():
 						original_geojson["features"].remove(feature)
 						continue
 			print(feature, " not removed")
+		os.remove(path_)
 
 	with open(original_geojson_path, 'w') as file:
 		json.dump(original_geojson, file)
