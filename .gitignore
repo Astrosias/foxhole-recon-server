@@ -5,3 +5,6 @@
 /test/
 /test0/
 /poubelle.py
+recon.geojson
+/tmp_json/removed/removed.geojson
+/tmp_json/recon/recon.geojson

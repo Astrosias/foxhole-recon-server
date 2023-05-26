@@ -148,41 +148,45 @@ map.on('pm:remove', e => {
 });
 
 function saveDrawing(){
-console.log("Saving drawings");
-var layers = L.PM.Utils.findLayers(map);
-var group = [];
-layers.forEach((layer)=>{
-    if (Object.hasOwn(layer, '_drawnByGeoman')){
-        layer_ = layer.toGeoJSON();
-        if (layer._popup !== null){
+    console.log("Saving drawings");
+    var layers = L.PM.Utils.findLayers(map);
+    var group = [];
+    layers.forEach((layer)=>{
+        if (Object.hasOwn(layer, '_drawnByGeoman')){
+            layer_ = layer.toGeoJSON();
+            if (layer._popup !== null){
                 console.log(layer._popup._content);
                 layer_.properties.popup =  layer._popup._content;
+            }
+            layer_.properties.shape = layer.pm._shape;
+            group.push(layer_);
         }
-        layer_.properties.shape = layer.pm._shape;
-        group.push(layer_);
-    }
-});
+    });
 
-var jsonObject = new Object();
-jsonObject.type = "FeatureCollection";
-jsonObject.features = group;
-console.log(jsonObject);
-export2txt(jsonObject, "recon.geojson");
+    var jsonObject = new Object();
+    jsonObject.type = "FeatureCollection";
+    jsonObject.features = group;
+    console.log(jsonObject);
+<!--    export2txt(jsonObject, "recon.geojson");-->
+    sendJson(jsonObject, "recon");
 
-var group = [];
-console.log(removed_features);
-    for (i in removed_features){
-        feature = removed_features[i];
-        console.log(feature);
-        group.push(feature);
-    };
+    var group = [];
+    console.log(removed_features);
+        for (i in removed_features){
+            feature = removed_features[i];
+            console.log(feature);
+            group.push(feature);
+        };
 
-var jsonObject = new Object();
-jsonObject.type = "FeatureCollection";
-jsonObject.features = group;
-console.log(jsonObject);
-export2txt(jsonObject, "removed.geojson");
+    var jsonObject = new Object();
+    jsonObject.type = "FeatureCollection";
+    jsonObject.features = group;
+    console.log(jsonObject);
+<!--    export2txt(jsonObject, "removed.geojson");-->
+    sendJson(jsonObject, "removed");
 }
+
+
 
 document.getElementById("saveButton").onclick = saveDrawing;
 

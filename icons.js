@@ -162,6 +162,14 @@ var geojsonLayerRecon = new L.GeoJSON.AJAX("recon.geojson", {
   onEachFeature: onEachFeatureRecon
 });
 
+function sendJson(jsonData, mode){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://127.0.0.1:5000/tmp_json/" + mode, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+        value: jsonData
+    }));
+}
 
 //plTrainPost[0] = L.polyline(latlonPost, {color: 'black', weight: '5'});
 //plTrainPost[1] = L.polyline(latlonPost, {color: 'black', weight: '3',  dashArray: '20, 20', dashOffset: '0'});
