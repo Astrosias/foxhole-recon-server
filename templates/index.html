@@ -50,11 +50,35 @@ var map = L.map('map', {
     crs: L.CRS.Simple
     });
 
-var tif_map = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
+map.createPane('labels');
+map.getPane('labels').style.pointerEvents = 'none';
+
+var naked = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
 	    maxZoom: 7,
         attribution: 'Astrosias',
         drawControl: true
 	}).addTo(map);
+
+var naked2 = L.tileLayer('http://localhost:5000/megatree/{z}/{y}/{x}', {
+	    maxZoom: 7,
+        attribution: 'Astrosias',
+        drawControl: true,
+        pane: 'labels'
+	}).addTo(map);
+
+var satellite = L.tileLayer('http://localhost:5000/satellite_megatree/{z}/{y}/{x}', {
+	    maxZoom: 7,
+        attribution: 'Astrosias',
+        drawControl: true,
+        pane: 'labels'
+	}).addTo(map);
+
+var baseMaps = {
+    "Naked Map": naked,
+    "Satellite Map": satellite
+};
+
+var layerControl = L.control.layers(baseMaps).addTo(map);
 
 map.setView( [-1000, 1000], 1);
 

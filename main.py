@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-	war_api_interface.retrieve_api_json()
+	# war_api_interface.retrieve_api_json()
 	return render_template('index.html')
 
 
