@@ -1,2 +1,0 @@
-docker build . --tag flask_server
-docker run -p 5000:5000 flask_server
